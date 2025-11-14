@@ -1,34 +1,19 @@
 // DEPENDENCIAS
 import express from "express";
 import dotenv from "dotenv";
-import mysql from "mysql2/promise";
+// import { myQuery } from "../databases/mysql.js";
+import { myQuery } from "../databases/turso.js";
 
-dotenv.config();    
+dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 4000;  
 app.use(express.json());
 
-// CONEXIÓN A LA BASE DE DATOS  
-const dbConfig = {
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE,
-    port: process.env.MYSQL_PORT
-};
-let connection;
-async function connectToDatabase() {
-    connection = await mysql.createConnection(dbConfig);
-    console.log("Conectado a la base de datos MySQL");
-        }
-async function myQuery(query) {
-    const [rows] = await connection.execute(query);
-    return rows;
-}
-
 // RUTAS
 app.get("/testdb",  async(req, res) => {
     let sqlQuery = "SELECT NOW() AS now";
+    sqlQuery = 'SELECT * FROM test';
     try {
         const result = await myQuery(sqlQuery);
         return res.json(result);
@@ -41,6 +26,6 @@ app.get("/testdb",  async(req, res) => {
 
 // INICIAR EL SERVIDOR
 app.listen(PORT,  async () => {
-    await connectToDatabase();
+
     console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
 }); 
